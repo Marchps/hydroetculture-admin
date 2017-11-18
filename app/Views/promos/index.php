@@ -1,0 +1,459 @@
+<!-- Script de Gestion du remplissage, obligatoirement dans ce fichier pour être dans la boucle qui comporte l'identifiant boutique, qui rend les éléments uniques entre les différentes boutiques gérées-->					
+<script type="text/javascript" src="/admin/web/js/jquery-1.9.1.min.js"></script>
+
+<div class="pageheader">
+            <div class="pageicon"><span class="iconfa-flag"></span></div>
+            <div class="pagetitle">
+                <h5>Gestion de <?php $txt=($count_btq[0]->cpt==1) ? 'ma boutique' : 'mes boutiques'; echo $txt; ?></h5>
+                <h1>Gestion des promotions</h1>
+            </div>
+        </div><!--pageheader-->
+        <div class="maincontent">
+            <div class="maincontentinner">
+
+        <div class="tabbable">
+                    <ul class="nav nav-tabs buttons-icons">
+                        <?php foreach ($boutiques as $boutique): ?>
+                            <li class="<?php if($count_btq[0]->cpt==1){echo'active';}?>"><a data-toggle="tab" href="#<?=$boutique->id_boutique?>"><?=$boutique->nom?> - <?=$boutique->ville?> <i style="color:white;" class="iconfa-share-alt fa-1x"></i></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <div class="tab-content">
+
+                    <?php
+                    if($count_btq[0]->cpt>1){
+                    ?>
+                    <div id="0" class="tab-pane active">
+                        Veuillez choisir une boutique.
+                    </div>
+                    <?php
+                    }
+                    ?>
+
+                        <?php foreach ($boutiques as $boutique): ?>
+                        <div id="<?=$boutique->id_boutique;?>" class="tab-pane <?php if($count_btq[0]->cpt==1){echo'active';}?>">
+                        <div class="row-fluid">
+                            <div class="widgetbox personal-information">
+									
+                                    <h4 class="widgettitle">Les promotions</h4>
+                                <div class="widgetcontent">
+								
+								Les promotions en cours :
+																
+									<table class="table table-bordered responsive">
+									
+									<tr>
+										<th>Message</th>
+										<th>Contenu cadre</th>
+										<th>Date de fin</th>
+										<th>Activation</th>
+									</tr>								
+									
+				                        <?php foreach ($promos as $promo): ?>
+										<style>
+										.simple-switch<?=$boutique->id_boutique . $promo->order_by ;?>  {
+										  width: 100px;
+										  height: 50px;
+										  background-color: grey;
+										  border: 1px solid #aaa;
+										  border-radius: 100px;
+										  position: relative;
+										  margin-left: 0;
+										  transition: background-color 0.2s ease-in-out;
+										}
+										.simple-switch<?=$boutique->id_boutique . $promo->order_by ;?> .simple-switch-inner {
+										  width: 100%;
+										  height: 100%;
+										}
+										.simple-switch<?=$boutique->id_boutique . $promo->order_by ;?> .simple-switch-inner .simple-switch-white {
+										  width: 50px;
+										  height: 100%;
+										  background-color: white;
+										  position: relative;
+										  border-radius: 100px;
+										  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+										  transition: margin-left 0.2s ease-in-out;
+										}
+										.simple-switch<?=$boutique->id_boutique . $promo->order_by ;?>.on {
+										  background-color: #00d373;
+										}
+										.simple-switch<?=$boutique->id_boutique . $promo->order_by ;?>.on .simple-switch-white {
+										  margin-left: 50px;
+										}
+										</style>
+										
+											<?php if($promo->id_boutique == $boutique->id_boutique){?>
+												<tr>
+													<td><?= $promo->description ?></td>
+													<td><?= $promo->libelle ?></td>
+													<?php $dateFinPromo = new DateTime($promo->date_fin); ?>
+													<td><?= $dateFinPromo->format('d/m/Y').' à 23:59:00' ?></td>
+													<td>
+													<div class="simple-switch<?= $boutique->id_boutique . $promo->order_by ?> <?php if($promo->active==1){echo "on";} ?>">
+													  <div class="simple-switch-inner">
+														<div class="simple-switch-white">
+														</div>
+													  </div>
+													</div>
+													</td>
+												</tr>
+											<?php } ?>
+										<?php endforeach; ?>
+											
+									</table>
+
+								
+                                    <form action="<?= BASE_LINK ?>/promos/update" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="nom" value="<?= $boutique->nom ?>">
+                                        <input type="hidden" name="ville" value="<?= $boutique->ville ?>">
+                                        <input type="hidden" name="idbtq" value="<?= $boutique->id_boutique ?>">
+										
+										<table class="table table-bordered responsive">
+										<tr>
+											<th>Textes</th>
+											<th>Aperçu</th>
+											<th>Enregistrer</th>
+										</tr>								
+										<tr>
+											<td>
+												<label><b>Texte dans le cadre de la promo 1 :</b></label>
+												<input id="libelle<?= $boutique->id_boutique ?>" placeholder="exemple : Promo, -30% ..." type="text" name="libelle" maxlength="6" class="input-xlarge"/>
+												<label><b>Message à l'intention du client :</b></label>
+												<input id="contenu<?= $boutique->id_boutique ?>" placeholder="exemple : -10% sur les engrais, pendant tout le mois de mai !!!" name="contenu_promo" maxlength="80" class="span8"/>
+												<label><b>Information de date de fin (23h59 le jour choisi) : </b></label>
+												<span class="field"><input placeholder="JJ-MM-AAAA" id="datepicker<?= $boutique->id_boutique ?>" type="text" name="date_fin" class="input-small" /></span>											
+												<p><b>Associer un pictogramme et un motif de fond :</b></p>
+													<div id="radio<?= $boutique->id_boutique ?>">
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="none" checked> Aucun /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="engrais"> Engrais /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="eclairage"> Eclairage /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="terreaux"> Terreau /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="ventilation"> Ventilation /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="chambre"> Chambre /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="culture"> Culture /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="bouture"> Bouture /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="dosage"> Dosage /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="hydroponie"> Hydroponie /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="divers"> Divers /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="traitement"> Traitement /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="destockage"> Destockage /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="soldes"> Soldes /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="noel"> Noël /
+														<input type="radio" name="chkbox<?= $boutique->id_boutique ?>" class="chkbox<?= $boutique->id_boutique ?>" value="nouveautes"> Nouveautés 
+													</div>
+											</td>
+											<td>
+											<style>
+											.picto<?= $boutique->id_boutique ?>{
+												height: 110px;
+												/*width: 100px;*/
+												z-index: 1;
+												background-size: 20%;
+												background-repeat: no-repeat;
+												position:relative;
+												background-position:230px;
+											}
+											</style>
+											
+											<div id="fond<?= $boutique->id_boutique ?>" style="width:555px;height:300px;background-image: url(../../../../ljm/images/promo2.jpg);">
+												<center>
+												<p id="apercu_contenu<?= $boutique->id_boutique ?>" class="apercu_sans_picto" id="texte">Ventes Flash, pas de temps à perdre, -50% sur toute la gamme d'engrais !</p>
+												<p id="apercu_libelle<?= $boutique->id_boutique ?>" style="text-align:center;font-weight: bold;font-size: 40px;margin-right:70px;margin-left:70px;color: white;padding: 15px;border: solid 1px white;" id="titre">-50%</p>
+												<div class="picto<?= $boutique->id_boutique ?>"></div>
+											</td>
+											<td rowspan="2">
+												<button style="margin-top: 340%;" type="submit" class="btn btn-primary">Enregistrer</button>
+											</td>
+										</tr>
+										<!-- 2e promotion -->
+										<tr>
+											<td>
+												<label><b>Texte dans le cadre de la promotion 2 :</b></label>
+												<input id="libelle2<?= $boutique->id_boutique ?>" placeholder="exemple : Promo" type="text" name="libelle2" maxlength="6" class="input-xlarge"/>
+												<label><b>Message à l'intention du client :</b></label>
+												<input id="contenu2<?= $boutique->id_boutique ?>" placeholder="exemple : -10% sur les engrais, pendant tout le mois de mai !!!" name="contenu_promo2" maxlength="80" class="span8"/>
+												<label><b>Information de date de fin (23h59 le jour choisi) :</b></label>
+												<span class="field"><input placeholder="JJ-MM-AAAA" id="datepicker2<?= $boutique->id_boutique ?>" type="text" name="date_fin2" class="input-small" /></span>
+												
+												<p><b>Associer un pictogramme :</b></p>
+													<div id="radio2<?= $boutique->id_boutique ?>">
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="none" checked> Aucun /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="engrais"> Engrais /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="eclairage"> Eclairage /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="terreaux"> Terreau /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="ventilation"> Ventilation /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="chambre"> Chambre /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="culture"> Culture /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="bouture"> Bouture /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="dosage"> Dosage /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="hydroponie"> Hydroponie / 
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="divers"> Divers /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="traitement"> Traitement /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="destockage"> Destockage /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="soldes"> Soldes /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="noel"> Noël /
+														<input type="radio" name="chkbox2<?= $boutique->id_boutique ?>" class="chkbox2<?= $boutique->id_boutique ?>" value="nouveautes"> Nouveautés 
+													</div>
+											</td>
+											<td>
+											<style>
+											.picto2<?= $boutique->id_boutique ?>{
+												height: 300px;
+												width: 100px;
+												z-index: 1;
+												background-size: 100%;
+												background-repeat: no-repeat;
+												/*background-position-y: 110px;*/
+												position:relative;
+											}
+											</style>
+											
+											<div id="fond2<?= $boutique->id_boutique ?>" style="width:555px;height:300px;background-image: url(../../../../ljm/images/promo2.jpg">
+												<center><p id="apercu_contenu2<?= $boutique->id_boutique ?>" class="apercu_sans_picto" id="texte">Ventes Flash, pas de temps à perdre, -50% sur toute la gamme d'engrais !</p>
+												<p id="apercu_libelle2<?= $boutique->id_boutique ?>" style="text-align:center;font-weight: bold;font-size: 40px;margin-right:70px;margin-left:70px;color: white;padding: 15px;border: solid 1px white;" id="titre">-50%</p>
+												<div class="picto2<?= $boutique->id_boutique ?>"></div></center>
+											</td>
+											<td>
+												
+											</td>
+										</tr>
+										</table>
+									</form>
+                                </div>
+								</center>
+                            </div>
+                        </div>
+                        						
+                        </div><!--tab-pane-->
+						
+						
+						<script type="text/javascript">
+						
+						/*Bouton activation promo*/
+						jQuery(".simple-switch<?= $boutique->id_boutique ?>1").on("click", function(e){
+						  jQuery(this).toggleClass("on");
+						  console.log('ok pour lorder 1');
+						});
+						
+						jQuery(".simple-switch<?= $boutique->id_boutique ?>2").on("click", function(e){
+						  jQuery(this).toggleClass("on");
+						  console.log('ok pour lorder 2');
+						});
+						
+						/*Fichier qui mets à jour l'aperçu dans promos/index */
+						/*------------------------POUR LA PROMO N°1---------------------*/
+						/*Les textes*/	
+						
+						jQuery("#libelle223").click(function(){
+							console.log('ok pour 1');
+						});
+						
+						jQuery( "#libelle<?= $boutique->id_boutique ?>" ).click(function() {
+							//alert("ok");
+							console.log("123");
+						});
+
+						
+						jQuery( "#libelle<?= $boutique->id_boutique ?>" ).keyup(function() {
+							//alert($('#apercu_libelle<?= $boutique->id_boutique ?>').text($('#libelle<?= $boutique->id_boutique ?>').val()));
+							console.log($('#apercu_libelle<?= $boutique->id_boutique ?>').text($('#libelle<?= $boutique->id_boutique ?>').val()));
+							//console.log('test');
+						});
+
+						jQuery( "#contenu<?= $boutique->id_boutique ?>" ).keyup(function() {
+							console.log(jQuery('#apercu_contenu<?= $boutique->id_boutique ?>').text(jQuery('#contenu<?= $boutique->id_boutique ?>').val()));
+						});
+
+						jQuery( "#libelle2<?= $boutique->id_boutique ?>" ).keyup(function() {
+							console.log(jQuery('#apercu_libelle2<?= $boutique->id_boutique ?>').text(jQuery('#libelle2<?= $boutique->id_boutique ?>').val()));
+						});
+
+						jQuery( "#contenu2<?= $boutique->id_boutique ?>" ).keyup(function() {
+							console.log(jQuery('#apercu_contenu2<?= $boutique->id_boutique ?>').text(jQuery('#contenu2<?= $boutique->id_boutique ?>').val()));
+						});
+
+						/*Les pictos*/
+
+						jQuery( "#radio<?= $boutique->id_boutique ?>" ).on( "click",function() {
+							
+							console.log("clique sur le chkbox");
+							
+							console.log('valeur de mon chkbx ::' + jQuery( "input[name=chkbox<?= $boutique->id_boutique ?>]:checked").val());
+							if(jQuery( "input[name=chkbox<?= $boutique->id_boutique ?>]:checked").val()!='none'){
+								/*on diminu la police de #apercu_contenu et on insère le bon picto*/
+								console.log('afficher picto');
+								jQuery('#apercu_contenu<?= $boutique->id_boutique ?>').removeClass("apercu_sans_picto");
+								jQuery('#apercu_contenu<?= $boutique->id_boutique ?>').addClass("apercu_avec_picto");
+								jQuery('.picto<?= $boutique->id_boutique ?>').show();
+								
+								switch(jQuery( "input[name=chkbox<?= $boutique->id_boutique ?>]:checked").val()){
+									case "chambre":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/chambre.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promochambre.jpg")');
+										break;
+									case "engrais":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/engrais.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoengrais.jpg")');
+										break;
+									case "ventilation":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/ventilation.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoventilation.jpg")');
+										break;
+									case "eclairage":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/eclairage.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoeclairage.jpg")');
+										break;
+									case "terreaux":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/terreaux.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoterreaux.jpg")');
+										break;
+									case "culture":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/culture.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promohydroponie.jpg")');
+										break;
+									case "bouture":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/bouture.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promobouture.jpg")');
+										break;
+									case "divers":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/divers.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promodivers.jpg")');										
+										break;
+									case "dosage":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/dosage.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promodosage.jpg")');
+										break;
+									case "hydroponie":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/hydroponie.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promohydroponie.jpg")');									
+										break;
+									case "pot":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/pot.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promopot.jpg")');
+										break;
+									case "traitement":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/traitement.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promotraitement.jpg")');
+										break;
+									case "destockage":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/destockage.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promodestockage.jpg")');
+										break;
+									case "soldes":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/soldes.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promosoldes.jpg")');
+										break;
+									case "noel":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/noel.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promonoel.jpg")');
+										break;
+									case "nouveautes":
+										jQuery('.picto<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/nouveautes.png")');
+										jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promonouveautes.jpg")');
+										break;
+								}
+								
+							}else{
+								console.log('NONE');
+								jQuery('.picto<?= $boutique->id_boutique ?>').hide();
+								jQuery('#fond<?= $boutique->id_boutique ?>').css('background-image', 'url("../../../../ljm/images/promo2.jpg")');
+								jQuery('#apercu_contenu<?= $boutique->id_boutique ?>').removeClass("apercu_avec_picto");
+								jQuery('#apercu_contenu<?= $boutique->id_boutique ?>').addClass("apercu_sans_picto");
+							}
+							
+						});
+						
+						/*------------------------POUR LA PROMO N°2---------------------*/
+						jQuery( "#radio2<?= $boutique->id_boutique ?>" ).on( "click",function() {
+							
+							console.log("clique sur le chkbox");
+							
+							console.log('valeur de mon chkbx ::' + jQuery( "input[name=chkbox2<?= $boutique->id_boutique ?>]:checked").val());
+							if(jQuery( "input[name=chkbox2<?= $boutique->id_boutique ?>]:checked").val()!='none'){
+								/*on diminu la police de #apercu_contenu et on insère le bon picto*/
+								console.log('afficher picto');
+								jQuery('#apercu_contenu2<?= $boutique->id_boutique ?>').removeClass("apercu_sans_picto");
+								jQuery('#apercu_contenu2<?= $boutique->id_boutique ?>').addClass("apercu_avec_picto");
+								jQuery('.picto2<?= $boutique->id_boutique ?>').show();
+								
+								switch(jQuery( "input[name=chkbox2<?= $boutique->id_boutique ?>]:checked").val()){
+									case "chambre":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/chambre.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promochambre.jpg")');
+										break;
+									case "engrais":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/engrais.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoengrais.jpg")');
+										break;
+									case "ventilation":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/ventilation.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoventilation.jpg")');
+										break;
+									case "eclairage":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/eclairage.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoeclairage.jpg")');
+										break;
+									case "terreaux":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/terreaux.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promoterreaux.jpg")');
+										break;
+									case "culture":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/culture.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promohydroponie.jpg")');
+										break;
+									case "bouture":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/bouture.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promobouture.jpg")');
+										break;
+									case "divers":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/divers.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promodivers.jpg")');										
+										break;
+									case "dosage":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/dosage.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promodosage.jpg")');
+										break;
+									case "hydroponie":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/hydroponie.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promohydroponie.jpg")');									
+										break;
+									case "pot":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/pot.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promosoin.jpg")');
+										break;
+									case "traitement":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/traitement.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promosoin.jpg")');
+										break;
+									case "destockage":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/destockage.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promodestockage.jpg")');
+										break;
+									case "soldes":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/soldes.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promosoldes.jpg")');
+										break;
+									case "noel":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/noel.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promonoel.jpg")');
+										break;
+									case "nouveautes":
+										jQuery('.picto2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/nouveautes.png")');
+										jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../images/promos/fonds/promonouveautes.jpg")');
+										break;
+								}
+								
+							}else{
+								console.log('NONE');
+								jQuery('.picto2<?= $boutique->id_boutique ?>').hide();
+								jQuery('#fond2<?= $boutique->id_boutique ?>').css('background-image', 'url("../../../../ljm/images/promo2.jpg")');
+								jQuery('#apercu_contenu2<?= $boutique->id_boutique ?>').removeClass("apercu_avec_picto");
+								jQuery('#apercu_contenu2<?= $boutique->id_boutique ?>').addClass("apercu_sans_picto");
+							}
+							
+						});
+						</script>
+                        <?php endforeach; ?>
+                    </div><!--tabcontent-->
+        </div><!--tabbable-->
+

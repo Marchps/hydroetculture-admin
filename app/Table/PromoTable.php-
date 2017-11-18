@@ -1,0 +1,27 @@
+<?php
+namespace App\Table;
+
+use Core\Table\Table;
+
+class PromoTable extends Table{
+
+/**
+     * Récupère les boutiques associées à l'id_user
+     * @param $id int
+     * @return \App\Entity\PostEntity
+     */
+	public function index(){
+        return $this->query("
+            SELECT *
+            FROM jm_promo");
+    }
+	 
+    public function update1($tab){		
+        return $this->query("UPDATE jm_promo SET `libelle`='". addslashes($tab['libelle'])."',`description`='".addslashes($tab['contenu_promo'])."',`picto`='".$tab['chkbox'.$tab['idbtq']]."' WHERE order_by=1 AND id_boutique=?;",[$tab['idbtq']],true);
+    }
+	
+	public function update2($tab){
+        return $this->query("UPDATE jm_promo SET `libelle`='". addslashes($tab['libelle2'])."',`description`='".addslashes($tab['contenu_promo2'])."',`picto`='".$tab['chkbox2'.$tab['idbtq']]."' WHERE order_by=2 AND id_boutique=?;",[$tab['idbtq']],true);
+    }
+	
+}

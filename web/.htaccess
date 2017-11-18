@@ -1,0 +1,5 @@
+ErrorDocument 404 /admin/web/index.php/boutiques/page404
+
+RewriteEngine On
+RewriteCond %{HTTP} off
+RewriteRule (.*) http://%{HTTP_HOST}%{REQUEST_URI} [R,L]
