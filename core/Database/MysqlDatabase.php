@@ -11,7 +11,7 @@ class MysqlDatabase extends Database{
     private $db_host;
     private $pdo;
 
-    public function __construct($db_name, $db_user = 'prestashop_c', $db_pass='HYZ1CeARAUiOGTtoeKLt', $db_host = 'localhost'){
+    public function __construct($db_name, $db_user = 'root', $db_pass='', $db_host = 'localhost'){
         $this->db_name = $db_name;
         $this->$db_user = $db_user;
         /*$this->$db_pass = $db_pass;*/
@@ -20,7 +20,7 @@ class MysqlDatabase extends Database{
 
     private function getPDO(){
         if($this->pdo === null){
-            $pdo = new PDO('mysql:dbname=prestashop_7;host=localhost:3306', 'prestashop_c', 'HYZ1CeARAUiOGTtoeKLt',  array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+            $pdo = new PDO('mysql:dbname=prestashop_admin;host=localhost', 'root', '',  array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo = $pdo;
         }
