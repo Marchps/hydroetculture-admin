@@ -9,12 +9,12 @@ text-decoration:none;
 -o-transition: all .6s ease-in;
 transition: all .6s ease-in;
 }
- 
+
 a.infobulle:hover{
 /*z-index:25;*/
 
 }
- 
+
 a.infobulle span{
 display: none;
 -webkit-transition: all .6s ease-in;
@@ -22,7 +22,7 @@ display: none;
 -o-transition: all .6s ease-in;
 transition: all .6s ease-in;
 }
- 
+
 a.infobulle:hover span{
 display:block;
 position:absolute;
@@ -45,13 +45,14 @@ z-index: 2;
             </div>
         </div><!--pageheader-->
         <div class="maincontent">
-            <div class="maincontentinner">			
-			
-        <a class="btn confirmbutton"><small>Confirm Box</small></a> &nbsp;
+            <div class="maincontentinner">
 
-			
+
+        <!--<a class="btn confirmbutton"><small>Confirm Box</small></a> &nbsp;-->
+
+
         <div class="tabbable">
-				
+
                     <ul class="nav nav-tabs buttons-icons">
                         <?php foreach ($boutiques as $boutique): ?>
                             <li data-id="<?=$boutique->id_boutique?>" class="<?php if($count_btq[0]->cpt==1){echo'active ';}?>class<?=$boutique->id_boutique?>"><a data-toggle="tab" href="#<?=$boutique->id_boutique?>"><?=$boutique->nom?> - <?=$boutique->ville?> <i style="color:white;" class="iconfa-share-alt fa-1x"></i> </a></li>
@@ -72,13 +73,13 @@ z-index: 2;
 
                         <?php foreach ($boutiques as $boutique): ?>
                         <div id="<?=$boutique->id_boutique;?>" class="tab-active-get-<?=$boutique->id_boutique;?> tab-pane <?php if($count_btq[0]->cpt==1){echo'active';}?>">
-                        <div class="row-fluid">    
+                        <div class="row-fluid">
                         <div class="span4 profile-left">
                             <div class="widgetbox tags">
                                     <h4 class="widgettitle">Heures d'ouvertures  <a class="infobulle"><i style="float:right;" class="iconfa-info-sign"></i>
                                         <span><b><u>Explications à propos des heures d'ouvertures et de fermetures:</u><br />
                                             Vous pouvez modidifier les heures d'ouvertures et de fermetures de votre boutique, le tableau des heures se présente de cette façon sur le site :</b>
-                                            <img src="<?= URL_IMAGE_BOUTIQUE ?>horaires.PNG"/> 
+                                            <img src="<?= URL_IMAGE_BOUTIQUE ?>horaires.PNG"/>
                                          </span></a></h4>
                                     <div class="widgetcontent">
                                     <form action="<?= BASE_LINK ?>/boutiques/update_houres" method="POST">
@@ -115,10 +116,10 @@ z-index: 2;
                                     <p>
                                         <label>Information supplémentaires (Vacances, jours fériés...) :</label> </p>
                                         <textarea name="h_a_savoir" class="span8"><?=$boutique->h_a_savoir;?></textarea><br />
-                                   
+
 
                                     <button type="submit" class="btn btn-primary">Enregistrer</button>
-                                    
+
                                     </form>
                                     </div>
                             </div>
@@ -127,7 +128,7 @@ z-index: 2;
                                     <h4 class="widgettitle">Affichage des pictos facilités <a class="infobulle"><i style="float:right;" class="iconfa-info-sign"></i>
                                         <span><b><u>Explications à propos des pictogrammes :</u><br />
                                             Vous pouvez choisir les picto à afficher ou non sur votre page, le tableau des pictogrammes se présente de cette façon sur le site :</b>
-                                            <img src="<?= URL_IMAGE_BOUTIQUE ?>facilites.PNG"/> 
+                                            <img src="<?= URL_IMAGE_BOUTIQUE ?>facilites.PNG"/>
                                          </span></a></h4>
                                     <div class="widgetcontent">
                                     <form method="POST" action="<?= BASE_LINK ?>/boutiques/update_facilites">
@@ -146,17 +147,17 @@ z-index: 2;
                                             </div>
 
                                         <?php endforeach;?>
-										
+
 										<div id="agrement" style="display:none;">
 											<label>Date de l'agrément (obligatoire et visible sur le site) : </label>
 											<input id='date_ag' name="date_ag" type="text" value="">
 										</div>
-										
+
                                         <br />
                                         <button type="submit" class="btn btn-primary">Enregistrer</button>
                                     </form>
                                     </div>
-                            </div>                           
+                            </div>
                         </div>
                         <div class="span8">
                             <div class="widgetbox personal-information">
@@ -224,7 +225,7 @@ z-index: 2;
                                 </div>
                             </div>
                         </div>
-                        
+
                         </div><!--tab-pane-->
                         <?php endforeach; ?>
                     </div><!--tabcontent-->
